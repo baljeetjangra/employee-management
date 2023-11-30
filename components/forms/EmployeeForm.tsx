@@ -1,22 +1,22 @@
 "use client";
 import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { register } from "module";
 import { Button } from "../ui/button";
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { apiAgent } from "@/lib/apiAgent";
+import { useToast } from "../ui/use-toast";
+import { ClipLoader } from "react-spinners";
 
 interface EmployeeFormData {
   name: string;
@@ -47,14 +47,36 @@ function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
 
 const EmployeeForm: React.FC<{}> = ({}) => {
   const [preview, setPreview] = useState("");
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<EmployeeFormData>({
+    defaultValues: {
+      name: "",
+      age: 0,
+      salary: 0,
+    },
     resolver: zodResolver(schema),
   });
 
-  function onSubmit(values: EmployeeFormData) {
-    console.log(values);
+  async function onSubmit(values: EmployeeFormData) {
+    try {
+      setIsLoading(true);
+      const res = await apiAgent.post("/create", values);
+      toast({
+        description: res.data.message,
+      });
+      form.reset();
+    } catch (error: any) {
+      toast({
+        description: error?.response?.data?.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
@@ -75,11 +97,18 @@ const EmployeeForm: React.FC<{}> = ({}) => {
         <FormField
           control={form.control}
           name="salary"
-          render={({ field }) => (
+          render={({ field: { onChange, ...rest } }) => (
             <FormItem>
               <FormLabel>Salary</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Salary" {...field} type="number" />
+                <Input
+                  placeholder="Enter Salary"
+                  {...rest}
+                  type="number"
+                  onChange={(event) => {
+                    onChange(parseInt(event.target.value));
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,11 +118,18 @@ const EmployeeForm: React.FC<{}> = ({}) => {
         <FormField
           control={form.control}
           name="age"
-          render={({ field }) => (
+          render={({ field: { onChange, ...rest } }) => (
             <FormItem>
               <FormLabel>Age</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Age" {...field} type="number" />
+                <Input
+                  placeholder="Enter Age"
+                  {...rest}
+                  type="number"
+                  onChange={(event) => {
+                    onChange(parseInt(event.target.value));
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,7 +163,9 @@ const EmployeeForm: React.FC<{}> = ({}) => {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? <ClipLoader size={20} color="white" /> : "Submit"}
+        </Button>
       </form>
     </Form>
   );
