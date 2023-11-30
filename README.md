@@ -10,14 +10,12 @@ The Employee Management System is a web application designed to manage employee 
 - **Add Employee**: Add a new employee to the system with relevant information.
 - **Edit Employee**: Modify existing employee records with updated details.
 - **Delete Employee**: Remove an employee from the system, confirming the action with a dialog.
-- **Responsive Design**: The application is designed to work seamlessly across various devices and screen sizes.
 
 ## Technologies Used
 
 - **React**: Frontend framework for building user interfaces.
 - **Zustand**: State management library for React.
 - **Tailwind CSS**: Utility-first CSS framework for styling.
-- **@radix-ui/react-dialog**: A library for creating accessible dialogs.
 - **axios**: HTTP client for making API requests.
 - **Lodash**: Utility library for common programming tasks.
 - **Shadcn/UI**: A UI component library for React.
