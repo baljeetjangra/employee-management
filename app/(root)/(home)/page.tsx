@@ -1,4 +1,4 @@
-import EmployeeList from "@/components/EmployeeList";
+import EmployeeList from "@/components/employee/EmployeeList";
 import EmployeeForm from "@/components/forms/EmployeeForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
