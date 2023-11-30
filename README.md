@@ -13,7 +13,7 @@ The Employee Management System is a web application designed to manage employee 
 
 ## Technologies Used
 
-- **React**: Frontend framework for building user interfaces.
+- **Next js**: Frontend framework for building user interfaces.
 - **Zustand**: State management library for React.
 - **Tailwind CSS**: Utility-first CSS framework for styling.
 - **axios**: HTTP client for making API requests.
