@@ -1,8 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Employee Management System
+
+The Employee Management System is a web application designed to manage employee data efficiently. It provides features such as viewing, adding, editing, and deleting employee records.
 
 ## Live - https://employee-management-steel.vercel.app/
 
+## Features
+
+- **View Employees**: Browse the list of employees with their details.
+- **Add Employee**: Add a new employee to the system with relevant information.
+- **Edit Employee**: Modify existing employee records with updated details.
+- **Delete Employee**: Remove an employee from the system, confirming the action with a dialog.
+- **Responsive Design**: The application is designed to work seamlessly across various devices and screen sizes.
+
+## Technologies Used
+
+- **React**: Frontend framework for building user interfaces.
+- **Zustand**: State management library for React.
+- **Tailwind CSS**: Utility-first CSS framework for styling.
+- **@radix-ui/react-dialog**: A library for creating accessible dialogs.
+- **axios**: HTTP client for making API requests.
+- **Lodash**: Utility library for common programming tasks.
+- **Shadcn/UI**: A UI component library for React.
+- **React Hook Form**: Library for managing forms in React applications.
+- **Zod**: A TypeScript-first schema declaration and validation library.
+
 ## Getting Started
+
+**Clone the Repository:**
+
+```bash
+git clone https://github.com/your-username/employee-management-system.git
+```
 
 First, run the development server:
 
