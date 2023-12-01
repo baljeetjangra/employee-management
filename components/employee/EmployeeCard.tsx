@@ -1,15 +1,9 @@
 import React from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-  CardDescription,
-  CardContent,
-} from "../ui/card"; // Replace with the actual path
+import { Card, CardTitle } from "../ui/card"; // Replace with the actual path
 import { Pencil, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { first } from "lodash";
+import Link from "next/link";
 
 interface IProps {
   name: string;
@@ -19,7 +13,7 @@ interface IProps {
 }
 
 const EmployeeCard = ({ name, imageUrl, onEdit, onDelete }: IProps) => (
-  <Card className="flex justify-between items-center p-2">
+  <Card className="flex justify-between items-center p-2 w-[300px]">
     <div className="flex items-center gap-2">
       <Avatar>
         <AvatarImage src={imageUrl} alt={name} />
@@ -28,12 +22,14 @@ const EmployeeCard = ({ name, imageUrl, onEdit, onDelete }: IProps) => (
       <CardTitle className="text-lg">{name}</CardTitle>
     </div>
     <div className="flex justify-between items-center gap-1">
-      <Pencil
-        onClick={onEdit}
-        color="gray"
-        height={15}
-        className="cursor-pointer"
-      />
+      <Link href={`/?tab=edit-employee`}>
+        <Pencil
+          onClick={onEdit}
+          color="gray"
+          height={15}
+          className="cursor-pointer"
+        />
+      </Link>
       <Trash2
         onClick={onDelete}
         color="red"

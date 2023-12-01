@@ -1,6 +1,10 @@
 type Employee = {
-  employee_name: string;
-  employee_salary: number;
-  employee_age: number;
-  profile_image: string;
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+  age?: number;
+  salary?: number;
+  profile_image?: string;
 };

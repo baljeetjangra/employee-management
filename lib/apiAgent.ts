@@ -3,14 +3,14 @@
 import axios from "axios";
 import { setupCache } from "axios-cache-adapter";
 
-const API_URL = "https://dummy.restapiexample.com/api/v1";
+const API_URL = "https://reqres.in/api";
 
 // Create a cache adapter with a maximum age of 15 minutes
 const cache = setupCache({
   maxAge: 15 * 60 * 1000,
 });
 
-const cachedApiAgent = axios.create({
+const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 5000,
   headers: {
@@ -19,12 +19,4 @@ const cachedApiAgent = axios.create({
   adapter: cache.adapter,
 });
 
-const apiAgent = axios.create({
-  baseURL: API_URL,
-  timeout: 5000,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export { cachedApiAgent, apiAgent };
+export { axiosInstance };

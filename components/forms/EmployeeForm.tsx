@@ -14,16 +14,9 @@ import {
 } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { apiAgent } from "@/lib/apiAgent";
+import { axiosInstance } from "@/lib/apiAgent";
 import { useToast } from "../ui/use-toast";
 import { ClipLoader } from "react-spinners";
-
-interface EmployeeFormData {
-  name: string;
-  salary: number;
-  age: number;
-  profile_image?: any;
-}
 
 const schema = z.object({
   name: z.string().min(2).max(50),
@@ -45,26 +38,32 @@ function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
   return { files, displayUrl };
 }
 
-const EmployeeForm: React.FC<{}> = ({}) => {
+interface IProps {
+  editMode: boolean;
+  employeeData?: Employee;
+}
+
+const EmployeeForm = ({ editMode, employeeData }: IProps) => {
   const [preview, setPreview] = useState("");
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<EmployeeFormData>({
+  const form = useForm<Employee>({
     defaultValues: {
-      name: "",
+      first_name: "",
       age: 0,
       salary: 0,
     },
+    values: employeeData,
     resolver: zodResolver(schema),
   });
 
-  async function onSubmit(values: EmployeeFormData) {
+  async function onSubmit(values: Employee) {
     try {
       setIsLoading(true);
-      const res = await apiAgent.post("/create", values);
+      await axiosInstance.post("/users", values);
       toast({
-        description: res.data.message,
+        description: "User created successfully!",
       });
       form.reset();
     } catch (error: any) {
@@ -79,89 +78,96 @@ const EmployeeForm: React.FC<{}> = ({}) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="salary"
-          render={({ field: { onChange, ...rest } }) => (
-            <FormItem>
-              <FormLabel>Salary</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter Salary"
-                  {...rest}
-                  type="number"
-                  onChange={(event) => {
-                    onChange(parseInt(event.target.value));
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="age"
-          render={({ field: { onChange, ...rest } }) => (
-            <FormItem>
-              <FormLabel>Age</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter Age"
-                  {...rest}
-                  type="number"
-                  onChange={(event) => {
-                    onChange(parseInt(event.target.value));
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Avatar className="w-24 h-24">
-          <AvatarImage src={preview} />
-          <AvatarFallback>BU</AvatarFallback>
-        </Avatar>
-        <FormField
-          control={form.control}
-          name="profile_image"
-          render={({ field: { onChange, value, ...rest } }) => (
-            <>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="flex space-x-4">
+          <FormField
+            control={form.control}
+            name="first_name"
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Profile Image</FormLabel>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter Name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="salary"
+            render={({ field: { onChange, ...rest } }) => (
+              <FormItem>
+                <FormLabel>Salary</FormLabel>
                 <FormControl>
                   <Input
-                    type="file"
+                    placeholder="Enter Salary"
                     {...rest}
+                    type="number"
                     onChange={(event) => {
-                      const { files, displayUrl } = getImageData(event);
-                      setPreview(displayUrl);
-                      onChange(files);
+                      onChange(parseInt(event.target.value));
                     }}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
-            </>
-          )}
-        />
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="age"
+            render={({ field: { onChange, ...rest } }) => (
+              <FormItem>
+                <FormLabel>Age</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Age"
+                    {...rest}
+                    type="number"
+                    onChange={(event) => {
+                      onChange(parseInt(event.target.value));
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {editMode && (
+          <div className="flex space-x-4">
+            <Avatar className="w-24 h-24">
+              <AvatarImage src={preview} />
+              <AvatarFallback>BU</AvatarFallback>
+            </Avatar>
+            <FormField
+              control={form.control}
+              name="profile_image"
+              render={({ field: { onChange, value, ...rest } }) => (
+                <>
+                  <FormItem>
+                    <FormLabel>Profile Image</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        {...rest}
+                        onChange={(event) => {
+                          const { files, displayUrl } = getImageData(event);
+                          setPreview(displayUrl);
+                          onChange(files);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </>
+              )}
+            />
+          </div>
+        )}
 
         <Button type="submit" disabled={isLoading}>
           {isLoading ? <ClipLoader size={20} color="white" /> : "Submit"}
