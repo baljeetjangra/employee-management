@@ -7,10 +7,13 @@ type EmployeeStore = {
 
 export const useEmployeeStore = create<EmployeeStore>((set) => ({
   employeeDetails: {
-    employee_name: "",
-    employee_age: 0,
-    employee_salary: 0,
+    first_name: "",
+    age: 0,
+    salary: 0,
     profile_image: "",
+    avatar:"",
+    email:"",
+    last_name:""
   },
   editEmployee: (data: Employee) => set((state) => ({ employeeDetails: data })),
 }));
