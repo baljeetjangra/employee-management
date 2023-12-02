@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardTitle } from "../ui/card"; // Replace with the actual path
 import { Pencil, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { first } from "lodash";
+import { first, truncate } from "lodash";
 import Link from "next/link";
 
 interface IProps {
@@ -19,10 +19,12 @@ const EmployeeCard = ({ name, imageUrl, onEdit, onDelete }: IProps) => (
         <AvatarImage src={imageUrl} alt={name} />
         <AvatarFallback>{first(name)}</AvatarFallback>
       </Avatar>
-      <CardTitle className="text-lg">{name}</CardTitle>
+      <CardTitle className="text-lg">
+        {truncate(name, { length: 25 })}
+      </CardTitle>
     </div>
     <div className="flex justify-between items-center gap-1">
-      <Link href={`/?tab=edit-employee`}>
+      <Link href={`/?tab=edit`}>
         <Pencil
           onClick={onEdit}
           color="gray"

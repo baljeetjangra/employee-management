@@ -14,29 +14,28 @@ import {
 } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { axiosInstance } from "@/lib/apiAgent";
 import { useToast } from "../ui/use-toast";
 import { ClipLoader } from "react-spinners";
 
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
 const schema = z.object({
-  name: z.string().min(2).max(50),
+  first_name: z.string().min(2).max(50),
   salary: z.number().int().positive(),
   age: z.number().int().positive().min(18).max(99),
-  profile_image: z.string().url().optional(),
+  profile_image: z
+    .any()
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0].type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    )
+    .optional(),
 });
-
-function getImageData(event: React.ChangeEvent<HTMLInputElement>) {
-  const dataTransfer = new DataTransfer();
-
-  Array.from(event.target.files!).forEach((image) =>
-    dataTransfer.items.add(image)
-  );
-
-  const files = dataTransfer.files;
-  const displayUrl = URL.createObjectURL(event.target.files![0]);
-
-  return { files, displayUrl };
-}
 
 interface IProps {
   editMode: boolean;
@@ -61,11 +60,28 @@ const EmployeeForm = ({ editMode, employeeData }: IProps) => {
   async function onSubmit(values: Employee) {
     try {
       setIsLoading(true);
-      await axiosInstance.post("/users", values);
-      toast({
-        description: "User created successfully!",
+
+      const formData = new FormData();
+      Object.keys(values).forEach((key) => {
+        if (key === "profile_image") {
+          const files = values[key] as any;
+          if (files.length > 0) {
+            formData.append(key, files[0]);
+          }
+        } else {
+          if (key in values && values[key as keyof Employee] !== undefined) {
+            formData.append(key, JSON.stringify(values[key as keyof Employee]));
+          }
+        }
       });
-      form.reset();
+
+      toast({
+        description: `User ${editMode ? "updated" : "created"} successfully!`,
+      });
+
+      if (!editMode) {
+        form.reset();
+      }
     } catch (error: any) {
       toast({
         description: error?.response?.data?.message,
@@ -108,6 +124,7 @@ const EmployeeForm = ({ editMode, employeeData }: IProps) => {
                     onChange={(event) => {
                       onChange(parseInt(event.target.value));
                     }}
+                    min={0}
                   />
                 </FormControl>
                 <FormMessage />
@@ -129,6 +146,7 @@ const EmployeeForm = ({ editMode, employeeData }: IProps) => {
                     onChange={(event) => {
                       onChange(parseInt(event.target.value));
                     }}
+                    min={0}
                   />
                 </FormControl>
                 <FormMessage />
@@ -155,8 +173,10 @@ const EmployeeForm = ({ editMode, employeeData }: IProps) => {
                         type="file"
                         {...rest}
                         onChange={(event) => {
-                          const { files, displayUrl } = getImageData(event);
-                          setPreview(displayUrl);
+                          const files = event.target.files;
+                          setPreview(
+                            URL.createObjectURL(event.target.files![0])
+                          );
                           onChange(files);
                         }}
                       />
