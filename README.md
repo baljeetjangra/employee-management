@@ -2,7 +2,7 @@
 
 The Employee Management System is a web application designed to manage employee data efficiently. It provides features such as viewing, adding, editing, and deleting employee records.
 
-## Live - https://employee-management-steel.vercel.app/
+## Live - https://employee-management-steel.vercel.app/en?tab=add
 
 ## Features
 
